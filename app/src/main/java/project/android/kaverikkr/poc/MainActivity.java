@@ -27,8 +27,8 @@ import project.android.kaverikkr.poc.BackgroundTasks.ServiceForIdleTime;
 
 
 /*
-  This class displays the stored max_idle_times for each day as the sleep period
-  in a list.
+  This class displays the stored max_idle_times for each day as the sleep period (timmings)
+  in a list, where each item represents each day.
 
  */
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         SharedPreferences preferences = getSharedPreferences("main_data",MODE_PRIVATE);
 
+        //Retrieving ist from storage and setting it the recycler view
         if(preferences.contains(EveryDayScheduler.START_TIME)){
             HashMap<String, String> testHashMap1,testHashMap2;
             String strt = preferences.getString(EveryDayScheduler.START_TIME,null);
@@ -59,15 +60,18 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+
+        // Scheduling task to run every 5 mins
         Intent intent1 = new Intent(this,ServiceForIdleTime.class);
         PendingIntent intent2 = PendingIntent.getService(this,0,intent1,0);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         manager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),60*1000,intent2);
 
+        // Scheduling task to run every 24 hrs
         Intent intent = new Intent(MainActivity.this,EveryDayScheduler.class);
         PendingIntent intent0 = PendingIntent.getService(this,0,intent,0);
        // AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        manager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),5*60*1000,intent0);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),AlarmManager.INTERVAL_DAY,intent0);
 
 
     }
